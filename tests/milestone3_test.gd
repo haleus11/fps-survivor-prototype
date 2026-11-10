@@ -29,6 +29,8 @@ func _ready() -> void:
 	_game = GAME_SCENE.instantiate()
 	_game.process_mode = Node.PROCESS_MODE_PAUSABLE
 	_game.get_node("DebugSpawner").set("enabled", false)
+	# Pas de vagues automatiques : ce test pilote lui-même les ennemis.
+	_game.get_node("WaveManager").set("auto_start", false)
 	add_child(_game)
 	_player = _game.get_node("Player") as FPSController
 	_head = _player.get_node("Head") as Node3D

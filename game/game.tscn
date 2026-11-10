@@ -1,10 +1,9 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="PackedScene" path="res://arena/arena.tscn" id="1_arena"]
 [ext_resource type="PackedScene" path="res://player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://ui/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" path="res://ui/pause_menu.tscn" id="4_pause"]
-[ext_resource type="PackedScene" path="res://targets/training_dummy.tscn" id="5_dummy"]
 [ext_resource type="Script" path="res://fx/damage_numbers.gd" id="6_numbers"]
 [ext_resource type="Script" path="res://fx/impact_effects.gd" id="7_impacts"]
 [ext_resource type="Script" path="res://enemies/enemy_manager.gd" id="8_manager"]
@@ -13,6 +12,9 @@
 [ext_resource type="Script" path="res://systems/debug_spawner.gd" id="11_spawner"]
 [ext_resource type="Resource" path="res://data/enemies/standard_enemy.tres" id="12_enemy_data"]
 [ext_resource type="PackedScene" path="res://ui/game_over.tscn" id="13_game_over"]
+[ext_resource type="Script" path="res://waves/wave_manager.gd" id="14_waves"]
+[ext_resource type="Resource" path="res://data/waves/default_waves.tres" id="15_wave_config"]
+[ext_resource type="PackedScene" path="res://ui/wave_intermission.tscn" id="16_intermission"]
 
 [node name="Game" type="Node3D"]
 
@@ -20,17 +22,6 @@
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-
-[node name="TestTargets" type="Node3D" parent="."]
-
-[node name="DummyNear" parent="TestTargets" instance=ExtResource("5_dummy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7)
-
-[node name="DummyMid" parent="TestTargets" instance=ExtResource("5_dummy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -14)
-
-[node name="DummyFar" parent="TestTargets" instance=ExtResource("5_dummy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -24)
 
 [node name="Enemies" type="Node3D" parent="." node_paths=PackedStringArray("player", "player_health", "player_progress")]
 script = ExtResource("8_manager")
@@ -45,6 +36,15 @@ script = ExtResource("11_spawner")
 enemy_manager = NodePath("../Enemies")
 player = NodePath("../Player")
 enemy_data = ExtResource("12_enemy_data")
+enabled = false
+
+[node name="WaveManager" type="Node" parent="." node_paths=PackedStringArray("enemy_manager", "spawn_finder", "player_progress")]
+script = ExtResource("14_waves")
+config = ExtResource("15_wave_config")
+base_enemy_data = ExtResource("12_enemy_data")
+enemy_manager = NodePath("../Enemies")
+spawn_finder = NodePath("../DebugSpawner")
+player_progress = NodePath("../Player/PlayerProgress")
 
 [node name="DamageNumbers" type="Node3D" parent="."]
 script = ExtResource("6_numbers")
@@ -52,14 +52,19 @@ script = ExtResource("6_numbers")
 [node name="ImpactEffects" type="Node3D" parent="."]
 script = ExtResource("7_impacts")
 
-[node name="HUD" parent="." node_paths=PackedStringArray("player", "weapon_inventory", "player_health", "player_progress") instance=ExtResource("3_hud")]
+[node name="HUD" parent="." node_paths=PackedStringArray("player", "weapon_inventory", "player_health", "player_progress", "wave_manager") instance=ExtResource("3_hud")]
 player = NodePath("../Player")
 weapon_inventory = NodePath("../Player/WeaponInventory")
 player_health = NodePath("../Player/PlayerHealth")
 player_progress = NodePath("../Player/PlayerProgress")
+wave_manager = NodePath("../WaveManager")
 
 [node name="PauseMenu" parent="." instance=ExtResource("4_pause")]
 
-[node name="GameOver" parent="." node_paths=PackedStringArray("player_health", "player_progress") instance=ExtResource("13_game_over")]
+[node name="WaveIntermission" parent="." node_paths=PackedStringArray("wave_manager") instance=ExtResource("16_intermission")]
+wave_manager = NodePath("../WaveManager")
+
+[node name="GameOver" parent="." node_paths=PackedStringArray("player_health", "player_progress", "wave_manager") instance=ExtResource("13_game_over")]
 player_health = NodePath("../Player/PlayerHealth")
 player_progress = NodePath("../Player/PlayerProgress")
+wave_manager = NodePath("../WaveManager")

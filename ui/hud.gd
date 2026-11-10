@@ -1,11 +1,13 @@
 extends CanvasLayer
 ## HUD : réticule dynamique, hitmarkers, arme active, munitions, rechargement, PV, XP, crédits,
-## flash de dégâts, messages temporaires (critique / élimination) et overlay de diagnostic (F3).
+## flash de dégâts, messages temporaires (critique / élimination), vague et chronomètre,
+## et overlay de diagnostic (F3).
 
 @export var player: FPSController
 @export var weapon_inventory: WeaponInventory
 @export var player_health: PlayerHealth
 @export var player_progress: PlayerProgress
+@export var wave_manager: WaveManager
 @export var feed_duration: float = 0.9
 @export var low_ammo_ratio: float = 0.25
 @export var low_health_ratio: float = 0.3
@@ -23,6 +25,9 @@ var _shown_ammo: int = -1
 var _shown_magazine: int = -1
 var _feed_timer: float = 0.0
 var _hurt_timer: float = 0.0
+var _shown_wave_text: String = ""
+var _shown_timer_text: String = ""
+var _shown_status_text: String = "-"
 
 @onready var _debug_overlay: DebugOverlay = $DebugOverlay
 @onready var _crosshair: Crosshair = $Crosshair
@@ -40,6 +45,10 @@ var _hurt_timer: float = 0.0
 @onready var _kill_sound: AudioStreamPlayer = %KillSound
 @onready var _hurt_sound: AudioStreamPlayer = %HurtSound
 @onready var _heal_sound: AudioStreamPlayer = %HealSound
+@onready var _wave_panel: Control = $WavePanel
+@onready var _wave_label: Label = %WaveLabel
+@onready var _timer_label: Label = %TimerLabel
+@onready var _wave_status_label: Label = %WaveStatusLabel
 
 
 func _ready() -> void:
@@ -70,6 +79,7 @@ func _process(delta: float) -> void:
 	var weapon: Weapon = weapon_inventory.get_active_weapon() if weapon_inventory != null else null
 	_update_weapon_panel(weapon)
 	_update_crosshair_gap(weapon)
+	_update_wave_panel()
 	if _feed_timer > 0.0:
 		_feed_timer = maxf(_feed_timer - delta, 0.0)
 		_feed_label.modulate.a = clampf(_feed_timer / (feed_duration * 0.4), 0.0, 1.0)
@@ -101,6 +111,44 @@ func _update_weapon_panel(weapon: Weapon) -> void:
 	_reload_bar.visible = weapon.is_reloading
 	if weapon.is_reloading:
 		_reload_bar.value = weapon.get_reload_progress()
+
+
+func _update_wave_panel() -> void:
+	if wave_manager == null or wave_manager.config == null:
+		_wave_panel.visible = false
+		return
+	var wave_text: String = ""
+	var timer_text: String = ""
+	var status_text: String = ""
+	var total_waves: int = wave_manager.config.wave_count
+	match wave_manager.state:
+		WaveManager.State.WAITING:
+			_wave_panel.visible = false
+			return
+		WaveManager.State.COUNTDOWN:
+			wave_text = "Vague 1 / %d" % total_waves
+			timer_text = WaveManager.format_time(wave_manager.config.wave_duration)
+			status_text = "Début dans %d" % ceili(wave_manager.countdown_left)
+		WaveManager.State.RUNNING:
+			wave_text = "Vague %d / %d" % [wave_manager.current_wave, total_waves]
+			timer_text = WaveManager.format_time(wave_manager.time_left)
+		WaveManager.State.CLEARING:
+			wave_text = "Vague %d / %d" % [wave_manager.current_wave, total_waves]
+			timer_text = "00:00"
+			status_text = "Éliminez les ennemis restants : %d" % wave_manager.get_remaining_enemies()
+		_:
+			wave_text = "Vague %d / %d" % [wave_manager.current_wave, total_waves]
+			timer_text = "00:00"
+	_wave_panel.visible = true
+	if wave_text != _shown_wave_text:
+		_shown_wave_text = wave_text
+		_wave_label.text = wave_text
+	if timer_text != _shown_timer_text:
+		_shown_timer_text = timer_text
+		_timer_label.text = timer_text
+	if status_text != _shown_status_text:
+		_shown_status_text = status_text
+		_wave_status_label.text = status_text
 
 
 func _update_crosshair_gap(weapon: Weapon) -> void:

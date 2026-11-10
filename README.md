@@ -1,6 +1,6 @@
 # FPS Survivor Prototype — Godot 4.7 (GDScript)
 
-État : **jalon 3** (ennemis qui poursuivent le joueur, dégâts de contact, PV, XP, crédits, soin, défaite).
+État : **jalon 4** (10 vagues chronométrées de 90 s, intensité croissante, élimination des restants, prime de fin de vague, entracte avec lancement manuel, victoire ou défaite).
 
 ## Lancer
 Ouvrir Godot 4.7 → Importer → `project.godot`, laisser l'import se terminer, puis F5.
@@ -25,6 +25,7 @@ godot --headless --path . --import
 godot --headless --path . res://tests/milestone1_test.tscn
 godot --headless --path . res://tests/milestone2_test.tscn
 godot --headless --path . res://tests/milestone3_test.tscn
+godot --headless --path . res://tests/milestone4_test.tscn
 ```
 Code de sortie 0 = tous les tests passent.
 
@@ -36,6 +37,7 @@ Code de sortie 0 = tous les tests passent.
 - Ennemi standard (PV, vitesse, dégâts et intervalle de contact, XP, crédits, chance de soin) : `data/enemies/standard_enemy.tres`
 - PV max et invulnérabilité du joueur : nœud `PlayerHealth` de `player/player.tscn`
 - Pool, séparation (rayon, force) et nombre max de soins au sol : nœud `Enemies` de `game/game.tscn`
-- Générateur de test (population maintenue, salve F4, distances) : nœud `DebugSpawner` de `game/game.tscn`
+- Vagues (nombre, durée, cadence d'apparition, population max, renforcement des ennemis, prime) : `data/waves/default_waves.tres`
+- Distances d'apparition autour du joueur et salve F4 : nœud `DebugSpawner` de `game/game.tscn`
 - Montant de soin et durée de vie du soin : `pickups/heal_pickup.gd`
 - Arène (100 × 100 m, obstacles, buttes et crêtes praticables) : `arena/arena.tscn` ; dimensions d'un relief = propriétés `base_size`, `top_size`, `height` des nœuds sous `Relief` (pentes < 40°)

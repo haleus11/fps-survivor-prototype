@@ -17,6 +17,8 @@ func _ready() -> void:
 	var game: Node = GAME_SCENE.instantiate()
 	# Les ennemis du générateur de test perturberaient ces mesures.
 	game.get_node("DebugSpawner").set("enabled", false)
+	# Pas de vagues automatiques : ce test pilote lui-même les ennemis.
+	game.get_node("WaveManager").set("auto_start", false)
 	# Ce nœud de test tourne toujours ; la partie doit rester soumise à la pause.
 	game.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(game)

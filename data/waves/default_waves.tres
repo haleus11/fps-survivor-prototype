@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="WaveConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://waves/wave_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+wave_count = 10
+wave_duration = 90.0
+first_wave_delay = 3.0
+spawn_rate_start = 0.6
+spawn_rate_end = 1.2
+spawn_rate_growth_per_wave = 0.22
+max_alive_base = 35
+max_alive_per_wave = 12
+max_alive_cap = 180
+health_growth_per_wave = 0.12
+damage_growth_per_wave = 0.06
+speed_growth_per_wave = 0.015
+clear_bonus_base = 20
+clear_bonus_per_wave = 10

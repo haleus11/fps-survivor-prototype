@@ -4,6 +4,7 @@ extends Node
 ## Code de sortie : 0 si tout passe, 1 sinon.
 
 const GAME_SCENE: PackedScene = preload("res://game/game.tscn")
+const DUMMY_SCENE: PackedScene = preload("res://targets/training_dummy.tscn")
 const PLAYER_START := Vector3(0.0, 0.05, 0.0)
 
 var _game: Node
@@ -25,6 +26,16 @@ func _ready() -> void:
 	_game = GAME_SCENE.instantiate()
 	# Les ennemis du générateur de test perturberaient ces mesures.
 	_game.get_node("DebugSpawner").set("enabled", false)
+	# Pas de vagues automatiques : ce test pilote lui-même les ennemis.
+	_game.get_node("WaveManager").set("auto_start", false)
+	# Les mannequins ne font plus partie de l'arène de jeu : le test place le sien en (0, 0, -7).
+	var targets := Node3D.new()
+	targets.name = "TestTargets"
+	_game.add_child(targets)
+	var dummy: Node3D = DUMMY_SCENE.instantiate()
+	dummy.name = "DummyNear"
+	dummy.position = Vector3(0.0, 0.0, -7.0)
+	targets.add_child(dummy)
 	_game.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(_game)
 	_player = _game.get_node("Player") as FPSController

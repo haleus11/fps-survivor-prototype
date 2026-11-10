@@ -1,7 +1,7 @@
 class_name DebugSpawner
 extends Node
-## Générateur de test du jalon 3 : maintient une population d'ennemis autour du joueur.
-## F4 ajoute une salve d'ennemis. Il sera remplacé par le gestionnaire de vagues au jalon 4.
+## Recherche de points d'apparition (utilisée par les vagues) et outil de test :
+## F4 ajoute une salve d'ennemis ; « enabled » maintient en plus une population fixe (désactivé en jeu).
 
 @export var enabled: bool = true
 @export var enemy_manager: EnemyManager
