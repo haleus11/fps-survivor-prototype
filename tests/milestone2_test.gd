@@ -301,4 +301,6 @@ func _check(condition: bool, label: String) -> void:
 		print("[ÉCHEC]  " + label)
 
 
-func _check_near(value: float, expected: float, tolerance: float, label: String) 
+func _check_near(value: float, expected: float, tolerance: float, label: String) -> void:
+	var detail: String = " (obtenu %.3f, attendu %.3f ± %.3f)" % [value, expected, tolerance]
+	_check(absf(value - expected) <= tolerance, label + detail)
