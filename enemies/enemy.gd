@@ -58,10 +58,13 @@ func activate(enemy_data: EnemyData, at: Vector3, player: FPSController, player_
 	collision_layer = ACTIVE_LAYER
 	collision_mask = ACTIVE_MASK
 	visible = true
-	process_mode = Node.PROCESS_MODE_INHERIT
+	set_physics_process(true)
 	is_active = true
 
 
+## Mise en réserve : le corps reste dans l'espace physique (sans couche ni masque), loin de l'arène.
+## Pas de PROCESS_MODE_DISABLED : il retire le corps de la simulation et, à la réactivation,
+## le corps peut réapparaître un instant à une ancienne position et éjecter le joueur.
 func deactivate() -> void:
 	is_active = false
 	visible = false
@@ -69,7 +72,7 @@ func deactivate() -> void:
 	collision_mask = 0
 	velocity = Vector3.ZERO
 	separation = Vector3.ZERO
-	process_mode = Node.PROCESS_MODE_DISABLED
+	set_physics_process(false)
 	global_position = PARKED_POSITION
 
 

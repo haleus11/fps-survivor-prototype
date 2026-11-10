@@ -78,6 +78,8 @@ func _test_chase_and_contact() -> void:
 	_check(Diagnostics.active_enemies == 1 and Diagnostics.total_spawns >= 1, "Compteurs de diagnostic mis à jour")
 	var start_distance: float = _horizontal_distance(enemy)
 	await _wait_physics(30)
+	var player_drift: float = Vector2(_player.global_position.x, _player.global_position.z).length()
+	_check(player_drift < 0.05, "L'apparition d'un ennemi ne déplace pas le joueur (écart %.2f m)" % player_drift)
 	var speed: float = Vector2(enemy.velocity.x, enemy.velocity.z).length()
 	_check_near(speed, _enemy_data.move_speed, 0.3, "L'ennemi poursuit à sa vitesse configurée")
 	_check(_horizontal_distance(enemy) < start_distance - 1.5, "L'ennemi se rapproche du joueur")
@@ -291,6 +293,16 @@ func _first_pickup() -> Node3D:
 		if not child.is_queued_for_deletion():
 			return child as Node3D
 	return null
+
+
+## Trace de diagnostic : positions et états physiques de l'ennemi et du joueur.
+func _trace(enemy: Enemy, moment: String) -> void:
+	var at: Vector3 = enemy.global_position
+	var player_at: Vector3 = _player.global_position
+	var real: Vector3 = enemy.get_real_velocity()
+	print("[TRACE]  %s : ennemi (%.2f, %.2f, %.2f) vitesse réelle %.2f m/s sol=%s mur=%s actif=%s | joueur (%.2f, %.2f, %.2f) vitesse %.2f m/s | %d ennemi(s) actif(s)" % [
+		moment, at.x, at.y, at.z, Vector2(real.x, real.z).length(), enemy.is_on_floor(), enemy.is_on_wall(), enemy.is_active,
+		player_at.x, player_at.y, player_at.z, _player.get_horizontal_speed(), _manager.get_active_count()])
 
 
 func _horizontal_distance(enemy: Enemy) -> float:
