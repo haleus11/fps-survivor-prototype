@@ -133,6 +133,9 @@ func _test_fire_rate_and_spread() -> void:
 func _test_recoil() -> void:
 	await _prepare_shot(0.0)
 	await _click()
+	# Le tir est traité au pas physique suivant : on attend qu'il soit effectué.
+	await _wait_physics(1)
+	_check(_shots == 1, "Le tir de test du recul est parti")
 	_check(_recoil.get_pitch_degrees() > 0.5, "Recul de visée appliqué (%.2f°)" % _recoil.get_pitch_degrees())
 	await _wait_physics(60)
 	await _wait_process(2)
@@ -298,6 +301,4 @@ func _check(condition: bool, label: String) -> void:
 		print("[ÉCHEC]  " + label)
 
 
-func _check_near(value: float, expected: float, tolerance: float, label: String) -> void:
-	var detail: String = " (obtenu %.3f, attendu %.3f ± %.3f)" % [value, expected, tolerance]
-	_check(absf(value - expected) <= tolerance, label + detail)
+func _check_near(value: float, expected: float, tolerance: float, label: String) 
