@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="PackedScene" path="res://arena/arena.tscn" id="1_arena"]
 [ext_resource type="PackedScene" path="res://player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://ui/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" path="res://ui/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" path="res://targets/training_dummy.tscn" id="5_dummy"]
+[ext_resource type="Script" path="res://fx/damage_numbers.gd" id="6_numbers"]
+[ext_resource type="Script" path="res://fx/impact_effects.gd" id="7_impacts"]
 
 [node name="Game" type="Node3D"]
 
@@ -12,7 +15,25 @@
 [node name="Player" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 
-[node name="HUD" parent="." node_paths=PackedStringArray("player") instance=ExtResource("3_hud")]
+[node name="TestTargets" type="Node3D" parent="."]
+
+[node name="DummyNear" parent="TestTargets" instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7)
+
+[node name="DummyMid" parent="TestTargets" instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -14)
+
+[node name="DummyFar" parent="TestTargets" instance=ExtResource("5_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -24)
+
+[node name="DamageNumbers" type="Node3D" parent="."]
+script = ExtResource("6_numbers")
+
+[node name="ImpactEffects" type="Node3D" parent="."]
+script = ExtResource("7_impacts")
+
+[node name="HUD" parent="." node_paths=PackedStringArray("player", "weapon_inventory") instance=ExtResource("3_hud")]
 player = NodePath("../Player")
+weapon_inventory = NodePath("../Player/WeaponInventory")
 
 [node name="PauseMenu" parent="." instance=ExtResource("4_pause")]

@@ -1,29 +1,32 @@
-# FPS Survivor Prototype — Godot 4.3+ (GDScript)
+# FPS Survivor Prototype — Godot 4.7 (GDScript)
 
-État : **jalon 1** (arène, contrôleur FPS, HUD de diagnostic, pause).
+État : **jalon 2** (pistolet, tir hitscan, chargeur, rechargement, critiques, recul, impacts, mannequins).
 
 ## Lancer
-1. Ouvrir Godot 4.3 ou plus récent → Importer → sélectionner `project.godot`.
-2. Laisser l'éditeur terminer l'import, puis F5.
+Ouvrir Godot 4.7 → Importer → `project.godot`, laisser l'import se terminer, puis F5.
 
 ## Contrôles (clavier AZERTY, touches physiques)
 | Action | Touche |
 |---|---|
-| Avancer / Reculer | Z / S |
-| Gauche / Droite | Q / D |
-| Sauter | Espace |
-| Sprinter | Shift gauche |
-| Caméra | Souris |
+| Avancer / Reculer / Gauche / Droite | Z / S / Q / D |
+| Sauter / Sprinter | Espace / Shift gauche |
+| Tirer | Clic gauche |
+| Recharger | R |
+| Arme principale 1 / 2 / pistolet | 1 / 2 / 3 |
+| Arme précédente / suivante | Molette |
 | Pause (libère la souris) | Échap |
 | Overlay de diagnostic | F3 |
-| Tirer, recharger, armes 1-2-3, molette | déclarés dans l'Input Map, utilisés à partir du jalon 2 |
 
-## Test automatisé du jalon 1
+## Tests automatisés
 ```
 godot --headless --path . --import
 godot --headless --path . res://tests/milestone1_test.tscn
+godot --headless --path . res://tests/milestone2_test.tscn
 ```
 Code de sortie 0 = tous les tests passent.
 
-## Réglages
-Déplacement, saut, gravité, sensibilité, FOV : `data/player/player_movement_config.tres`.
+## Réglages (sans toucher au code)
+- Déplacement, saut, sensibilité, FOV : `data/player/player_movement_config.tres`
+- Chance et multiplicateur critiques de base : `data/player/player_stats_data.tres`
+- Pistolet (dégâts, cadence, chargeur, rechargement, dispersion, recul, sons) : `data/weapons/pistol.tres`
+- PV et réapparition des mannequins : `targets/training_dummy.tscn`

@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://weapons/weapon_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://weapons/hitscan_fire_behavior.gd" id="2_hitscan"]
+[ext_resource type="PackedScene" path="res://weapons/views/pistol_view.tscn" id="3_view"]
+[ext_resource type="AudioStream" path="res://audio/pistol_fire.wav" id="4_fire"]
+[ext_resource type="AudioStream" path="res://audio/reload_start.wav" id="5_reload_start"]
+[ext_resource type="AudioStream" path="res://audio/reload_end.wav" id="6_reload_end"]
+[ext_resource type="AudioStream" path="res://audio/empty_click.wav" id="7_empty"]
+
+[sub_resource type="Resource" id="Resource_hitscan"]
+script = ExtResource("2_hitscan")
+
+[resource]
+script = ExtResource("1_data")
+id = &"pistol"
+display_name = "Pistolet"
+view_scene = ExtResource("3_view")
+fire_behavior = SubResource("Resource_hitscan")
+fire_mode = 0
+damage = 25.0
+fire_rate_rpm = 300.0
+projectile_count = 1
+max_range = 120.0
+projectile_speed = 0.0
+explosion_radius = 0.0
+magazine_size = 12
+reload_time = 1.2
+spread_min_degrees = 0.5
+spread_max_degrees = 2.0
+spread_per_shot_degrees = 0.6
+spread_recovery_degrees_per_second = 6.0
+recoil_pitch_degrees = 1.2
+recoil_yaw_degrees = 0.35
+recoil_recovery_speed = 10.0
+view_kick_distance = 0.045
+view_kick_degrees = 6.0
+fire_sound = ExtResource("4_fire")
+reload_start_sound = ExtResource("5_reload_start")
+reload_end_sound = ExtResource("6_reload_end")
+empty_sound = ExtResource("7_empty")
+price = 0

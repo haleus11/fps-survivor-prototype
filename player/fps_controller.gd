@@ -14,7 +14,7 @@ var _jump_buffer_timer: float = 0.0
 var _spawn_transform: Transform3D
 
 @onready var _head: Node3D = $Head
-@onready var _camera: Camera3D = $Head/Camera3D
+@onready var _camera: Camera3D = $Head/RecoilPivot/Camera3D
 
 
 func _ready() -> void:
