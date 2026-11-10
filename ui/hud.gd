@@ -1,13 +1,20 @@
 extends CanvasLayer
-## HUD : réticule dynamique, hitmarkers, arme active, munitions, rechargement,
-## messages temporaires (critique / élimination) et overlay de diagnostic (F3).
+## HUD : réticule dynamique, hitmarkers, arme active, munitions, rechargement, PV, XP, crédits,
+## flash de dégâts, messages temporaires (critique / élimination) et overlay de diagnostic (F3).
 
 @export var player: FPSController
 @export var weapon_inventory: WeaponInventory
+@export var player_health: PlayerHealth
+@export var player_progress: PlayerProgress
 @export var feed_duration: float = 0.9
 @export var low_ammo_ratio: float = 0.25
+@export var low_health_ratio: float = 0.3
+@export var hurt_flash_alpha: float = 0.35
+@export var hurt_flash_duration: float = 0.3
 @export var ammo_color: Color = Color(1.0, 1.0, 1.0)
 @export var low_ammo_color: Color = Color(1.0, 0.35, 0.3)
+@export var health_color: Color = Color(1.0, 1.0, 1.0)
+@export var low_health_color: Color = Color(1.0, 0.35, 0.3)
 @export var critical_feed_color: Color = Color(1.0, 0.62, 0.1)
 @export var kill_feed_color: Color = Color(1.0, 0.3, 0.25)
 
@@ -15,23 +22,42 @@ var _shown_weapon: Weapon = null
 var _shown_ammo: int = -1
 var _shown_magazine: int = -1
 var _feed_timer: float = 0.0
+var _hurt_timer: float = 0.0
 
 @onready var _debug_overlay: DebugOverlay = $DebugOverlay
 @onready var _crosshair: Crosshair = $Crosshair
+@onready var _damage_flash: ColorRect = $DamageFlash
 @onready var _weapon_name_label: Label = %WeaponNameLabel
 @onready var _ammo_label: Label = %AmmoLabel
 @onready var _reload_bar: ProgressBar = %ReloadBar
 @onready var _feed_label: Label = %FeedLabel
+@onready var _health_label: Label = %HealthLabel
+@onready var _health_bar: ProgressBar = %HealthBar
+@onready var _xp_label: Label = %XpLabel
+@onready var _credits_label: Label = %CreditsLabel
 @onready var _hit_sound: AudioStreamPlayer = %HitSound
 @onready var _critical_sound: AudioStreamPlayer = %CriticalSound
 @onready var _kill_sound: AudioStreamPlayer = %KillSound
+@onready var _hurt_sound: AudioStreamPlayer = %HurtSound
+@onready var _heal_sound: AudioStreamPlayer = %HealSound
 
 
 func _ready() -> void:
 	_debug_overlay.player = player
 	_reload_bar.visible = false
 	_feed_label.modulate.a = 0.0
+	_damage_flash.color.a = 0.0
 	DamageManager.hit_landed.connect(_on_hit_landed)
+	if player_health != null:
+		player_health.health_changed.connect(_on_health_changed)
+		player_health.damaged.connect(_on_player_damaged)
+		player_health.healed.connect(_on_player_healed)
+		_on_health_changed(player_health.current_health, player_health.max_health)
+	if player_progress != null:
+		player_progress.xp_changed.connect(_on_xp_changed)
+		player_progress.credits_changed.connect(_on_credits_changed)
+		_on_xp_changed(player_progress.xp)
+		_on_credits_changed(player_progress.credits)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -47,6 +73,9 @@ func _process(delta: float) -> void:
 	if _feed_timer > 0.0:
 		_feed_timer = maxf(_feed_timer - delta, 0.0)
 		_feed_label.modulate.a = clampf(_feed_timer / (feed_duration * 0.4), 0.0, 1.0)
+	if _hurt_timer > 0.0:
+		_hurt_timer = maxf(_hurt_timer - delta, 0.0)
+		_damage_flash.color.a = hurt_flash_alpha * (_hurt_timer / hurt_flash_duration)
 
 
 func _update_weapon_panel(weapon: Weapon) -> void:
@@ -99,6 +128,32 @@ func _on_hit_landed(_target: Node, info: DamageInfo, killed: bool) -> void:
 	else:
 		_crosshair.show_hitmarker(Crosshair.HitKind.NORMAL)
 		_hit_sound.play()
+
+
+func _on_health_changed(current: float, maximum: float) -> void:
+	_health_label.text = "PV  %d / %d" % [ceili(current), ceili(maximum)]
+	_health_bar.max_value = maximum
+	_health_bar.value = current
+	var is_low: bool = current <= maximum * low_health_ratio
+	_health_label.modulate = low_health_color if is_low else health_color
+
+
+func _on_player_damaged(_amount: float, _source: Node) -> void:
+	_hurt_timer = hurt_flash_duration
+	_damage_flash.color.a = hurt_flash_alpha
+	_hurt_sound.play()
+
+
+func _on_player_healed(_amount: float) -> void:
+	_heal_sound.play()
+
+
+func _on_xp_changed(total: int) -> void:
+	_xp_label.text = "XP : %d" % total
+
+
+func _on_credits_changed(total: int) -> void:
+	_credits_label.text = "Crédits : %d" % total
 
 
 func _show_feed(text: String, color: Color) -> void:

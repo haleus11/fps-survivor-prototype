@@ -7,6 +7,7 @@ var active_projectiles: int = 0
 var active_effects: int = 0
 var total_spawns: int = 0
 var total_kills: int = 0
+var separation_enabled: bool = true
 
 
 func reset() -> void:

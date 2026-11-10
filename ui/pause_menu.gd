@@ -25,6 +25,9 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
+		# Partie figée par un autre écran (défaite, plus tard Level-Up) : Échap ne la relance pas.
+		if get_tree().paused and not _root.visible:
+			return
 		set_paused(not get_tree().paused)
 		get_viewport().set_input_as_handled()
 

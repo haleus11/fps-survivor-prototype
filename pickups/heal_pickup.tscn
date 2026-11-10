@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://pickups/heal_pickup.gd" id="1_pickup"]
+
+[sub_resource type="BoxMesh" id="Mesh_bar_h"]
+size = Vector3(0.5, 0.16, 0.16)
+
+[sub_resource type="BoxMesh" id="Mesh_bar_v"]
+size = Vector3(0.16, 0.5, 0.16)
+
+[sub_resource type="StandardMaterial3D" id="Mat_heal"]
+albedo_color = Color(0.2, 1, 0.4, 1)
+emission_enabled = true
+emission = Color(0.2, 1, 0.4, 1)
+emission_energy_multiplier = 1.2
+
+[node name="HealPickup" type="Node3D"]
+script = ExtResource("1_pickup")
+
+[node name="Visual" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+
+[node name="BarH" type="MeshInstance3D" parent="Visual"]
+cast_shadow = 0
+mesh = SubResource("Mesh_bar_h")
+material_override = SubResource("Mat_heal")
+
+[node name="BarV" type="MeshInstance3D" parent="Visual"]
+cast_shadow = 0
+mesh = SubResource("Mesh_bar_v")
+material_override = SubResource("Mat_heal")

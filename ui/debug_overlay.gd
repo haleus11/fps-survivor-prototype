@@ -30,11 +30,14 @@ func _build_text(average_frame_ms: float) -> String:
 		"DIAGNOSTIC (F3)",
 		"FPS : %d" % roundi(Engine.get_frames_per_second()),
 		"Frame moyenne : %.2f ms" % average_frame_ms,
+		"Temps physique : %.2f ms" % (Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0),
 		"Ennemis actifs : %d" % Diagnostics.active_enemies,
 		"Projectiles : %d" % Diagnostics.active_projectiles,
 		"Effets : %d" % Diagnostics.active_effects,
 		"Spawns totaux : %d" % Diagnostics.total_spawns,
 		"Kills totaux : %d" % Diagnostics.total_kills,
+		"Séparation (F6) : %s" % ("activée" if Diagnostics.separation_enabled else "désactivée"),
+		"F4 : +25 ennemis",
 	])
 	if player != null:
 		var player_position: Vector3 = player.global_position

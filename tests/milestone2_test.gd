@@ -23,6 +23,8 @@ var _failures: int = 0
 
 func _ready() -> void:
 	_game = GAME_SCENE.instantiate()
+	# Les ennemis du générateur de test perturberaient ces mesures.
+	_game.get_node("DebugSpawner").set("enabled", false)
 	_game.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(_game)
 	_player = _game.get_node("Player") as FPSController

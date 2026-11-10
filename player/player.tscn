@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://player/fps_controller.gd" id="1_ctrl"]
 [ext_resource type="Resource" path="res://data/player/player_movement_config.tres" id="2_cfg"]
@@ -7,6 +7,8 @@
 [ext_resource type="Resource" path="res://data/player/player_stats_data.tres" id="5_stats_data"]
 [ext_resource type="Script" path="res://weapons/weapon_inventory.gd" id="6_inventory"]
 [ext_resource type="Resource" path="res://data/weapons/pistol.tres" id="7_pistol"]
+[ext_resource type="Script" path="res://player/player_health.gd" id="8_health"]
+[ext_resource type="Script" path="res://player/player_progress.gd" id="9_progress"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
@@ -40,6 +42,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17, -0.16, -0.3)
 [node name="PlayerStats" type="Node" parent="."]
 script = ExtResource("4_stats")
 data = ExtResource("5_stats_data")
+
+[node name="PlayerHealth" type="Node" parent="."]
+script = ExtResource("8_health")
+max_health = 100.0
+invulnerability_time = 0.2
+
+[node name="PlayerProgress" type="Node" parent="."]
+script = ExtResource("9_progress")
 
 [node name="WeaponInventory" type="Node" parent="." node_paths=PackedStringArray("owner_body", "aim_camera", "stats", "recoil", "view_pivot")]
 script = ExtResource("6_inventory")
