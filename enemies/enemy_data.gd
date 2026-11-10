@@ -14,7 +14,7 @@ extends Resource
 @export var contact_reach: float = 0.3
 
 @export_group("Déplacement")
-@export var move_speed: float = 4.5
+@export var move_speed: float = 3.8
 @export var acceleration: float = 30.0
 @export var turn_speed: float = 10.0
 @export var gravity: float = 22.0

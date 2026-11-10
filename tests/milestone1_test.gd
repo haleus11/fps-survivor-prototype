@@ -103,7 +103,7 @@ func _test_no_double_jump() -> void:
 
 
 func _test_wall_collision() -> void:
-	_teleport(Vector3(20.0, 0.05, -24.0))
+	_teleport(Vector3(20.0, 0.05, -44.0))
 	await _wait_physics(5)
 	Input.action_press("move_forward")
 	Input.action_press("sprint")
@@ -111,7 +111,7 @@ func _test_wall_collision() -> void:
 	Input.action_release("move_forward")
 	Input.action_release("sprint")
 	var z: float = _player.global_position.z
-	_check(z > -30.0 + 0.35 and z < -29.0, "Collision avec le mur d'enceinte (z = %.2f)" % z)
+	_check(z > -50.0 + 0.35 and z < -49.0, "Collision avec le mur d'enceinte (z = %.2f)" % z)
 	await _wait_physics(15)
 
 

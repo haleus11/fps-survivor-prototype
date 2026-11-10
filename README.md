@@ -38,3 +38,4 @@ Code de sortie 0 = tous les tests passent.
 - Pool, séparation (rayon, force) et nombre max de soins au sol : nœud `Enemies` de `game/game.tscn`
 - Générateur de test (population maintenue, salve F4, distances) : nœud `DebugSpawner` de `game/game.tscn`
 - Montant de soin et durée de vie du soin : `pickups/heal_pickup.gd`
+- Arène (100 × 100 m, obstacles, buttes et crêtes praticables) : `arena/arena.tscn` ; dimensions d'un relief = propriétés `base_size`, `top_size`, `height` des nœuds sous `Relief` (pentes < 40°)

@@ -1,6 +1,6 @@
 extends Node
 ## Test automatisé du jalon 3 : ennemis, poursuite, contact, invulnérabilité, récompenses,
-## pool, soin, séparation, charge de 150 ennemis, contournement d'obstacle et défaite.
+## pool, soin, séparation, charge de 150 ennemis, contournement d'obstacle, relief et défaite.
 ## Lancement : godot --headless --path <dossier_du_projet> res://tests/milestone3_test.tscn
 
 const GAME_SCENE: PackedScene = preload("res://game/game.tscn")
@@ -58,6 +58,7 @@ func _run_all() -> void:
 	await _test_separation()
 	await _test_stress()
 	await _test_obstacle_detour()
+	await _test_relief()
 	await _test_game_over()
 
 
@@ -196,7 +197,7 @@ func _test_stress() -> void:
 	var escaped: int = 0
 	for enemy in _manager.get_active_enemies():
 		var at: Vector3 = enemy.global_position
-		if at.y < -1.0 or absf(at.x) > 30.0 or absf(at.z) > 30.0:
+		if at.y < -1.0 or absf(at.x) > 50.0 or absf(at.z) > 50.0:
 			escaped += 1
 	_check(escaped == 0, "Aucun ennemi hors de l'arène ou sous le sol")
 	_manager.clear_enemies()
@@ -215,6 +216,35 @@ func _test_obstacle_detour() -> void:
 			reached = true
 			break
 	_check(reached, "L'ennemi contourne la barrière pour atteindre le joueur")
+
+
+func _test_relief() -> void:
+	await _reset_scene_state()
+	# Butte nord-est : base 20 × 20 m centrée en (35, -35), plateau de 8 × 8 m à 2,5 m de haut.
+	_player.global_position = Vector3(35.0, PLAYER_START.y, -20.0)
+	await _wait_physics(5)
+	Input.action_press("move_forward")
+	await _wait_physics(150)
+	Input.action_release("move_forward")
+	await _wait_physics(20)
+	var top_y: float = _player.global_position.y
+	_check(top_y > 2.2, "Le joueur gravit la butte (y = %.2f)" % top_y)
+	var enemy: Enemy = _manager.spawn_enemy(_enemy_data, Vector3(35.0, ENEMY_Y, -18.0))
+	var reached: bool = false
+	for _frame in 480:
+		await _wait_physics(1)
+		_health.reset()
+		if _horizontal_distance(enemy) < 2.0 and enemy.global_position.y > 1.5:
+			reached = true
+			break
+	_check(reached, "L'ennemi gravit la butte pour atteindre le joueur (y = %.2f)" % enemy.global_position.y)
+	_manager.clear_enemies()
+	var points: int = 0
+	for _attempt in 40:
+		var point: Vector3 = _spawner.find_spawn_point()
+		if point != Vector3.INF and point.y < _spawner.max_ground_height + 0.1:
+			points += 1
+	_check(points >= 30, "Points d'apparition trouvés près du relief (%d / 40)" % points)
 
 
 func _test_game_over() -> void:
